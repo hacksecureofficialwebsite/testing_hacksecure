@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { getSupabaseClient, isAuthenticated } from "@/lib/supabase-client"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 
-export default function InternLayout({ children }) {
+export default function InternLayout({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
   const router = useRouter()
