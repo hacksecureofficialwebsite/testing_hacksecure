@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation"
 import { getSupabaseClient, isAuthenticated } from "@/lib/supabase-client"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { AuthChangeEvent, Session } from "@supabase/supabase-js"
 
-export default function InternLayout({ children }: { children: ReactNode }) {
+interface LayoutProps {
+  children: ReactNode
+}
+
+export default function InternLayout({ children }: LayoutProps) {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
   const router = useRouter()
@@ -27,14 +32,16 @@ export default function InternLayout({ children }: { children: ReactNode }) {
     checkAuth()
 
     // Set up auth state listener
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN") {
-        setAuthenticated(true)
-      } else if (event === "SIGNED_OUT") {
-        setAuthenticated(false)
-        router.push("/signin")
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (event === "SIGNED_IN") {
+          setAuthenticated(true)
+        } else if (event === "SIGNED_OUT") {
+          setAuthenticated(false)
+          router.push("/signin")
+        }
       }
-    })
+    )
 
     return () => {
       if (authListener && authListener.subscription) {
