@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: "export", // ✅ Enable static export
+  // If you're exporting a static site, uncomment this:
+  // output: "export",
 
   reactStrictMode: true,
 
   images: {
-    unoptimized: true, // ✅ Required for static export (fixes Next.js image issues)
-    domains: ["hebbkx1anhila5yf.public.blob.vercel-storage.com"], // Allowed external image domain
+    unoptimized: true, // Needed for static export (no next/image optimization)
+    domains: ["hebbkx1anhila5yf.public.blob.vercel-storage.com"], // Your image domains
   },
 
   env: {
@@ -19,9 +20,15 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
   },
 
-  // 🚨 Rewrites DO NOT work with static export.
-  // Static export requires pre-rendered pages, so API routes won't work.
-  // If you NEED API routes, remove `output: "export"` and use `npm run build && npm start`
-};
+  // ✅ Disable SWC minifier and fallback to Webpack transforms
+  swcMinify: false,
+  experimental: {
+    forceSwcTransforms: false,
+  },
 
-module.exports = nextConfig;
+  webpack(config) {
+    return config
+  },
+}
+
+module.exports = nextConfig
