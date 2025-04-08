@@ -1,17 +1,19 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import type { SupabaseClient } from "@supabase/auth-helpers-nextjs"
 
-// Create a singleton instance of the Supabase client
-let supabaseClient
+// Explicitly type the Supabase client
+let supabaseClient: SupabaseClient<any> | null = null
 
-export const getSupabaseClient = () => {
+// Singleton client creator
+export const getSupabaseClient = (): SupabaseClient<any> => {
   if (!supabaseClient) {
     supabaseClient = createClientComponentClient()
   }
   return supabaseClient
 }
 
-// Helper function to check if a user is authenticated
-export const isAuthenticated = async () => {
+// Check if user is authenticated
+export const isAuthenticated = async (): Promise<boolean> => {
   const supabase = getSupabaseClient()
   const {
     data: { session },
@@ -19,7 +21,7 @@ export const isAuthenticated = async () => {
   return !!session
 }
 
-// Helper function to get the current user
+// Get current user from session
 export const getCurrentUser = async () => {
   const supabase = getSupabaseClient()
   const {
@@ -27,4 +29,3 @@ export const getCurrentUser = async () => {
   } = await supabase.auth.getSession()
   return session?.user || null
 }
-
